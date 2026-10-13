@@ -2,7 +2,7 @@
 (function () {
   const $ = (id) => document.getElementById(id);
   const el = { buddy: $('buddy'), bubble: $('bubble'), who: $('who'), text: $('text'), meter: $('meter'),
-    form: $('form'), input: $('input'), actions: $('actions'), ok: $('ok'), snooze: $('snooze'), close: $('close') };
+    form: $('form'), input: $('input'), actions: $('actions'), ok: $('ok'), snooze: $('snooze'), undo: $('undo'), changes: $('changes'), close: $('close') };
   const api = window.buddy;
   const rec = new window.BuddyAudio.Recorder();
 
@@ -61,8 +61,12 @@
   });
 
   // ---------- bubble ----------
-  function showBubble({ who = '', text = '', meter = false, form = false, actions = false, hideAfter = 0 }) {
+  function showBubble({ who = '', text = '', meter = false, form = false, actions = false, hideAfter = 0, changes = [], undo = false, snooze = false }) {
     clearTimeout(hideTimer);
+    el.changes.replaceChildren(...changes.map(c => { const li = document.createElement('li'); li.textContent = c; return li; }));
+    el.changes.hidden = !changes.length;
+    el.undo.hidden = !undo;
+    el.snooze.hidden = !snooze;
     el.who.textContent = who;
     el.text.textContent = text;
     el.meter.hidden = !meter;
@@ -189,11 +193,15 @@
   async function send(text) {
     setOverlay('think');
     showBubble({ who: 'You said', text });
-    let reply;
-    try { reply = await api.ask(text); } catch (e) { reply = `Hmm, that failed: ${e.message}`; }
+    let r;
+    try { r = await api.ask(text); } catch (e) { r = { text: `Hmm, that failed: ${e.message}`, changes: [] }; }
+    const reply = r.text || '';
     beep(SOUNDS.reply);
     setOverlay('talk');
-    showBubble({ who: name, text: reply, hideAfter: readTime(reply) });
+    const changed = (r.changes || []).length > 0;
+    // When the calendar changed, keep the bubble up so he can check it and hit Undo.
+    showBubble({ who: name, text: reply, changes: r.changes || [], actions: changed, undo: !!r.undoable,
+      hideAfter: changed ? 120000 : readTime(reply) });
     setTimeout(() => { if (overlay === 'talk') setOverlay(null); }, Math.min(12000, reply.length * 65));
   }
 
@@ -204,10 +212,17 @@
     beep(SOUNDS.alert);
     setOverlay('alert');
     setTimeout(() => { if (overlay === 'alert') setOverlay(null); }, 1700);
-    showBubble({ who: 'Reminder', text, actions: true, hideAfter: 90000 });
-    el.snooze.hidden = !snooze;
+    showBubble({ who: 'Reminder', text, actions: true, snooze, hideAfter: 90000 });
   });
   el.ok.addEventListener('click', hideBubble);
+  el.undo.addEventListener('click', async () => {
+    setOverlay('think');
+    showBubble({ who: name, text: 'Rolling it back…' });
+    const msg = await api.undo();
+    setOverlay('talk');
+    showBubble({ who: name, text: msg, hideAfter: readTime(msg) });
+    setTimeout(() => { if (overlay === 'talk') setOverlay(null); }, 3000);
+  });
   el.snooze.addEventListener('click', () => { api.snooze(reminderText); hideBubble(); });
 
   api.onCommand((c) => { if (c === 'listen') onClick(); if (c === 'type') openTyping(); });

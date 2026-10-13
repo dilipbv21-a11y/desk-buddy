@@ -3,6 +3,9 @@ const path = require('path');
 
 const DEFAULTS = {
   name: 'Mario',
+  brain: 'ollama',            // 'ollama' (free, on this Mac) or 'claude' (needs anthropicApiKey)
+  ollamaModel: 'auto',
+  ollamaHost: 'http://127.0.0.1:11434',
   anthropicApiKey: '',
   model: 'claude-sonnet-5-5',
   timeZone: 'Asia/Kolkata',

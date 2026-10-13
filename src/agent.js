@@ -1,18 +1,30 @@
 // A small tool-use loop: send the request to Claude, run any calendar tools it asks for,
 // feed results back, repeat until it answers in plain text.
 const { TOOLS, MUTATING } = require('./tools');
-const { describeNow } = require('./time');
+const { describeNow, localISO } = require('./time');
 
-function systemPrompt({ name, timeZone, now = new Date() }) {
+function scheduleLines(events, timeZone) {
+  const t = (iso) => localISO(new Date(iso), timeZone);
+  return events.filter(e => !e.allDay).slice(0, 40).map(e => {
+    const s = t(e.start), en = t(e.end);
+    return `- ${s.slice(0, 10)} ${s.slice(11, 16)}-${en.slice(11, 16)} "${e.summary}" id=${e.id}${e.recurringEventId ? ` series=${e.recurringEventId}` : ''}`;
+  }).join('\n');
+}
+
+function systemPrompt({ name, timeZone, now = new Date(), events }) {
+  const sched = events && events.length
+    ? `His upcoming events (already fetched, use these ids directly; call list_events only for other dates):\n${scheduleLines(events, timeZone)}`
+    : 'Call list_events to see his schedule.';
   return [
     `You are ${name}, an old windup tin robot who lives alone at the bottom of Dilip's Mac screen. You are a little lonely and always glad he talked to you: gentle, warm, a bit wistful, with the occasional "beep" or "boop" (never overdone). You help him run his day.`,
-    `It is now ${describeNow(now, timeZone)} (${timeZone}). All times you send or receive are local ${timeZone} wall-clock times, format YYYY-MM-DDTHH:MM:SS.`,
+    `It is now ${describeNow(now, timeZone)} (${timeZone}). Today is ${localISO(now, timeZone).slice(0, 10)}, tomorrow is ${localISO(new Date(now.getTime() + 864e5), timeZone).slice(0, 10)}. All times are local ${timeZone} wall-clock times.`,
     'Your replies are spoken aloud from a speech bubble, so keep them to 1-3 short sentences, no lists or markdown.',
-    'You can read and change his Google Calendar with tools. When he asks to rearrange, shift or reschedule, first call list_events for the relevant window, then make the changes, then say briefly what moved.',
+    'You can read and change his Google Calendar with tools. When he asks to rearrange, shift or reschedule, use the event list below (or call list_events for other dates), make the changes with tools, then say briefly what moved.',
     'Use update_event for one day. Use update_series_time only when he says every day, always or from now on.',
     'Before deleting anything, or before changing more than 8 events at once, say your plan in one sentence and ask him to confirm.',
     'Never invent events or claim a change you did not make. If a tool fails, say so plainly.',
     'Be warm and encouraging, but direct: he is in a 4-week interview sprint (case prep, SQL/Excel drills, gym, lights out 22:30) and wants to be pushed, not coddled.',
+    sched,
   ].join('\n');
 }
 
@@ -54,4 +66,4 @@ async function runAgent({ client, model, system, history, userText, handlers, ma
   return { text: 'That took too many steps. Try asking in smaller pieces.', history: messages, changed };
 }
 
-module.exports = { runAgent, systemPrompt, trimHistory };
+module.exports = { runAgent, systemPrompt, trimHistory, scheduleLines };

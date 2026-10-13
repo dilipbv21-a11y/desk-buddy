@@ -6,6 +6,8 @@ const { loadConfig } = require('./src/config');
 const { Calendar } = require('./src/calendar');
 const { makeHandlers } = require('./src/tools');
 const { runAgent, systemPrompt } = require('./src/agent');
+const { runOllamaAgent, BrainOffline } = require('./src/ollama');
+const { journaled } = require('./src/journal');
 const { dueReminders, waterDue, WATER_LINES } = require('./src/reminders');
 const { inWindow } = require('./src/time');
 const speech = require('./src/speech');
@@ -13,7 +15,7 @@ const speech = require('./src/speech');
 app.setPath('userData', path.join(app.getPath('appData'), 'desk-buddy'));
 if (!app.requestSingleInstanceLock()) app.quit();
 
-const W = 300, H = 340;
+const W = 300, H = 420;
 let cfg, calendar, win, tray;
 let history = [];
 let events = [];
@@ -112,23 +114,44 @@ function checkReminders() {
   if (w.due && !walk.busy) remind(WATER_LINES[Math.floor(Math.random() * WATER_LINES.length)]);
 }
 
-// ---------- Claude ----------
+// ---------- brain: local Ollama (free) or Claude API ----------
+let lastJournal = null;
 async function ask(text) {
-  if (!cfg.anthropicApiKey) return 'I need your Anthropic API key first. Right-click me and open Settings.';
-  const client = new Anthropic({ apiKey: cfg.anthropicApiKey });
+  const system = systemPrompt({ name: cfg.name, timeZone: cfg.timeZone, events });
+  const journal = journaled(makeHandlers(calendar, cfg.timeZone), calendar, cfg.timeZone);
+  const reply = (t) => ({ text: t, changes: journal.lines(), undoable: journal.undoable() });
   try {
-    const out = await runAgent({
-      client, model: cfg.model,
-      system: systemPrompt({ name: cfg.name, timeZone: cfg.timeZone }),
-      history, userText: text, handlers: makeHandlers(calendar, cfg.timeZone),
-    });
+    let out;
+    if (cfg.brain === 'claude') {
+      if (!cfg.anthropicApiKey) return reply('I need your Anthropic API key first. Right-click me and open Settings.');
+      const client = new Anthropic({ apiKey: cfg.anthropicApiKey });
+      out = await runAgent({ client, model: cfg.model, system, history, userText: text, handlers: journal.handlers });
+    } else {
+      out = await runOllamaAgent({ host: cfg.ollamaHost, model: cfg.ollamaModel, system, history, userText: text, handlers: journal.handlers });
+    }
     history = out.history;
-    if (out.changed) refreshEvents();
-    return out.text;
+    if (journal.entries.length) { lastJournal = journal; refreshEvents(); }
+    return reply(out.text);
   } catch (e) {
     console.error(e);
-    if (e.status === 401) return 'Claude rejected the API key. Check it in Settings.';
-    return `Something went wrong talking to Claude: ${e.message}`;
+    if (journal.entries.length) { lastJournal = journal; refreshEvents(); }
+    if (e instanceof BrainOffline) return reply(`My brain is switched off. ${e.message} Run "npm run setup:brain" in Terminal, then restart me.`);
+    if (e.status === 401) return reply('Claude rejected the API key. Check it in Settings.');
+    return reply(`Something went wrong in my head: ${e.message}`);
+  }
+}
+
+async function undoLast() {
+  if (!lastJournal) return 'Nothing to undo.';
+  try {
+    const n = await lastJournal.undo();
+    lastJournal = null;
+    history.push({ role: 'user', content: '(He pressed Undo. All the calendar changes from your last reply were reverted.)' },
+      { role: 'assistant', content: cfg.brain === 'claude' ? [{ type: 'text', text: 'Understood, changes reverted.' }] : 'Understood, changes reverted.' });
+    refreshEvents();
+    return n ? `Undone. ${n === 1 ? 'That change is' : `All ${n} changes are`} rolled back. Beep.` : 'Nothing to undo.';
+  } catch (e) {
+    return `I couldn't undo everything: ${e.message}`;
   }
 }
 
@@ -140,6 +163,7 @@ function menuTemplate() {
     { type: 'separator' },
     { label: walk.paused ? 'Start walking' : 'Stay here', click: () => { walk.paused = !walk.paused; rebuildTray(); } },
     { label: 'New conversation', click: () => { history = []; } },
+    { label: 'Open Claude (app)', click: () => shell.openExternal('https://claude.ai/new') },
     { type: 'separator' },
     { label: calendar.isSignedIn() ? 'Google Calendar connected ✓' : 'Sign in to Google…', click: signIn },
     { label: 'Settings (config.json)…', click: () => shell.openPath(cfg._file) },
@@ -181,15 +205,20 @@ ipcMain.handle('buddy:mic', async () => process.platform !== 'darwin' || systemP
 ipcMain.handle('buddy:transcribe', (_e, wav) => speech.transcribe(cfg, wav));
 ipcMain.handle('buddy:ask', async (_e, text) => {
   const reply = await ask(text);
-  speech.speak(cfg, reply);
+  speech.speak(cfg, reply.text);
   return reply;
+});
+ipcMain.handle('buddy:undo', async () => {
+  const msg = await undoLast();
+  speech.speak(cfg, msg);
+  return msg;
 });
 
 // ---------- boot ----------
 app.whenReady().then(async () => {
   if (process.platform === 'darwin' && app.dock) app.dock.hide();
   cfg = loadConfig(app.getPath('userData'));
-  fs.watchFile(cfg._file, { interval: 2000 }, () => { cfg = loadConfig(app.getPath('userData')); calendar.timeZone = cfg.timeZone; calendar.calendarId = cfg.calendarId; });
+  fs.watchFile(cfg._file, { interval: 2000 }, () => { const prev = cfg.brain; cfg = loadConfig(app.getPath('userData')); if (cfg.brain !== prev) history = []; calendar.timeZone = cfg.timeZone; calendar.calendarId = cfg.calendarId; });
   calendar = new Calendar({
     credentialsPath: path.join(cfg._dir, 'google-credentials.json'),
     tokenPath: path.join(cfg._dir, 'google-token.json'),

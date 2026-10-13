@@ -26,7 +26,10 @@ html, body { margin: 0; height: 100%; background: transparent; overflow: hidden;
 #form input:focus { border-color: var(--accent); }
 #actions { display: flex; gap: 6px; margin-top: 8px; }
 #actions button { flex: 1; padding: 6px 8px; border-radius: 9px; border: 1.5px solid var(--accent); background: var(--accent); color: #fff; font: 600 12px system-ui; cursor: pointer; }
-#actions #snooze { background: transparent; color: var(--accent); }
+#actions #snooze, #actions #undo { background: transparent; color: var(--accent); }
+#changes { margin: 8px 0 0; padding: 8px 10px; list-style: none; border-radius: 10px; background: #F3ECDD; font-size: 12.5px; }
+#changes li { padding: 2px 0; }
+#changes li::before { content: "✓ "; color: var(--accent); font-weight: 700; }
 @keyframes pop { from { transform: scale(.9) translateY(6px); opacity: 0; } to { transform: none; opacity: 1; } }
 
 /* ---------- buddy: an old windup tin robot ---------- */

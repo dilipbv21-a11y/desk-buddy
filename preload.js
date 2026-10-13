@@ -18,4 +18,5 @@ contextBridge.exposeInMainWorld('buddy', {
   askMic: () => ipcRenderer.invoke('buddy:mic'),
   transcribe: (wav) => ipcRenderer.invoke('buddy:transcribe', wav),
   ask: (text) => ipcRenderer.invoke('buddy:ask', text),
+  undo: () => ipcRenderer.invoke('buddy:undo'),
 });

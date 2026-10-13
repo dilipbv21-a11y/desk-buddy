@@ -1,13 +1,14 @@
 {
   "name": "desk-buddy",
   "productName": "Desk Buddy",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "A cute walking desktop buddy for macOS that reminds you of your Google Calendar and reschedules your day with Claude when you talk to it.",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "test": "node --test test/*.test.js",
     "setup:voice": "bash scripts/setup-voice.sh",
+    "setup:brain": "bash scripts/setup-brain.sh",
     "dist": "electron-builder --mac"
   },
   "keywords": ["desktop-pet", "electron", "claude", "google-calendar", "macos"],

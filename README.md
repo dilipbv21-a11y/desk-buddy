@@ -11,7 +11,7 @@ Mario, an old windup tin robot who lives, a bit lonely, at the bottom of your Ma
 - **Walks** slowly along the top of your Dock on stiff tin legs while his windup key turns. When he stops, he slumps, sighs and looks around. His eyes follow your cursor, and you can drag him sideways.
 - **Calendar reminders.** It hops and shows a speech bubble 5 minutes before every event and again when the event starts. It also reads the reminder aloud and sends a macOS notification. You can tap "Got it" or "Snooze 10 min".
 - **Water reminders** every 60 minutes while you're awake.
-- **Click to talk.** It listens through your mic, transcribes on your Mac with whisper.cpp, and sends your request to Claude. Claude reads and edits your Google Calendar with tools, then answers in the bubble and out loud.
+- **Click to talk.** It listens through your mic, transcribes on your Mac with whisper.cpp, and hands your request to its brain (a free local model, or Claude). The brain edits your Google Calendar with tools. Mario then answers out loud and lists exactly what changed, with an **Undo** button.
 - **Right-click** for a menu: type instead of talking, stay in place, sign in to Google, open settings, open the Daily OS board, or quit. The same menu sits in the menu bar under 🤖.
 - **Winds down** between 22:30 and 07:00. He sits, his eyes dim, he stops walking, and he skips water reminders so he doesn't nag you at night.
 - **Lights up when you click him.** His eyes glow and he greets you, because you're his only company.
@@ -29,13 +29,21 @@ npm install
 npm run setup:voice      # installs whisper.cpp + a 140 MB English model (on-device, free)
 ```
 
-### 2. Anthropic API key
+### 2. Mario's brain
 
-1. Create a key at <https://console.anthropic.com> → API Keys, and add a few dollars of credit.
-2. Run `npm start` once. It creates `~/Library/Application Support/desk-buddy/config.json`.
-3. Right-click the buddy → **Settings**, then paste the key into `"anthropicApiKey"`. Settings reload automatically.
+Pick one:
 
-You can also run `ANTHROPIC_API_KEY=sk-ant-... npm start` instead.
+**Free, on your Mac (default).** Ollama runs a small open model locally, so it's private and works offline.
+
+```bash
+npm run setup:brain   # installs Ollama + qwen2.5 (7B on 16 GB Macs, 3B on 8 GB)
+```
+
+It handles clear, single requests well ("move gym to 3:30 pm"). Big reshuffles are hit-and-miss on the small model, which is why Mario always lists exactly what changed and gives you an **Undo** button.
+
+**Claude (paid API, smartest).** Create a key at <https://platform.claude.com> → API Keys and add a few dollars of credit. Right-click Mario → **Settings**, set `"brain": "claude"` and paste the key into `"anthropicApiKey"`. Settings reload automatically.
+
+> A Claude Pro/Max subscription can't power Mario: Anthropic only allows those logins in its own apps. On your phone, the Claude app with Google Calendar connected does the same rescheduling job, covered by your plan.
 
 ### 3. Google Calendar access
 
@@ -67,7 +75,9 @@ It asks you to confirm before deleting anything, or before changing more than 8 
 | Key | Default | What it does |
 |---|---|---|
 | `name` | `Mario` | Robot's name |
-| `model` | `claude-sonnet-5-5` | Claude model used for conversations |
+| `brain` | `ollama` | `ollama` (free, local) or `claude` (API key) |
+| `ollamaModel` | `auto` | Which local model; `auto` picks the best installed |
+| `model` | `claude-sonnet-5-5` | Claude model when `brain` is `claude` |
 | `timeZone` | `Asia/Kolkata` | Time zone for reading and writing events |
 | `reminderLeadMinutes` | `5` | How early the "coming up" reminder fires |
 | `water` | `{ enabled: true, everyMinutes: 60 }` | Water reminder |
@@ -88,7 +98,7 @@ To start it at login, drag the app into **System Settings → General → Login 
 ## How it's built
 
 - `main.js`: Electron main process. Runs a transparent, always-on-top, click-through window and the walking loop, polls the calendar every 5 minutes, checks reminders every 30 seconds, and has the right-click and menu-bar menus.
-- `src/agent.js`: the Claude tool-use loop. `src/tools.js`: the calendar tools Claude can call (list, create, update one, update a whole series, delete).
+- `src/agent.js`: the Claude tool-use loop. `src/ollama.js`: the same loop for a local Ollama model. `src/journal.js`: records every change for the change list and Undo. `src/tools.js`: the calendar tools Claude can call (list, create, update one, update a whole series, delete).
 - `src/calendar.js`: Google Calendar using a loopback OAuth flow. Tokens stay on your Mac with `chmod 600`.
 - `src/speech.js`: whisper.cpp for listening, macOS `say` for talking.
 - `renderer/`: the robot (inline SVG with CSS animations), speech bubble, beeps (Web Audio), and mic recorder.
@@ -96,7 +106,7 @@ To start it at login, drag the app into **System Settings → General → Login 
 
 ## Privacy
 
-Your voice is transcribed on your Mac. Only the transcribed text and your calendar data go to Anthropic's API, and only when you talk to the buddy. Keys and tokens live in `~/Library/Application Support/desk-buddy/` and are git-ignored.
+Your voice is transcribed on your Mac. With the default local brain, nothing leaves your Mac except calls to Google Calendar. With `brain: claude`, the transcribed text and your calendar data go to Anthropic's API, and only when you talk to Mario. Keys and tokens live in `~/Library/Application Support/desk-buddy/` and are git-ignored.
 
 ## Roadmap
 

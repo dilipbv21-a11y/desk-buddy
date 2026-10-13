@@ -34,9 +34,19 @@
     alert: [[1200, .07], [1200, .07], [1500, .12]],
   };
 
+  // He's been alone down there. He's always glad you clicked.
+  const GREETINGS = [
+    "Oh! You're back. Beep.",
+    'Company! Finally. What do you need?',
+    "Beep! I was hoping you'd click. Talk to me.",
+    'Oh hi. It gets quiet down here. What can I do?',
+    'Boop. I was just counting the icons again. What do you need?',
+  ];
+  const greet = () => GREETINGS[Math.floor(Math.random() * GREETINGS.length)];
+
   // ---------- mood ----------
   function paint() {
-    const mode = overlay || (base === 'busy' ? 'idle' : base);
+    const mode = overlay || (base === 'busy' ? 'attentive' : base);
     el.buddy.className = `hit ${mode}${dir < 0 ? ' left' : ''}`;
   }
   function setOverlay(m) { overlay = m; paint(); syncBusy(); }
@@ -123,7 +133,7 @@
     listening = true; heard = false; silentMs = 0; totalMs = 0;
     beep(SOUNDS.hello);
     setOverlay('listen');
-    showBubble({ who: 'Listening', text: 'Audio sensors on. Talk to me, then click me when done.', meter: true });
+    showBubble({ who: name, text: `${greet()}\n(Talk, then click me when you're done.)`, meter: true });
     try {
       await rec.start((rms, ms) => {
         el.meter.firstElementChild.style.width = `${Math.min(100, rms * 900)}%`;
@@ -165,7 +175,7 @@
   // ---------- typing ----------
   function focusInput() { api.focus(); setTimeout(() => el.input.focus(), 50); }
   function openTyping() {
-    showBubble({ who: name, text: 'What should I do?', form: true });
+    showBubble({ who: name, text: greet(), form: true });
     focusInput();
   }
   el.form.addEventListener('submit', (e) => {

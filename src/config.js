@@ -10,7 +10,7 @@ const DEFAULTS = {
   reminderLeadMinutes: 5,
   speak: true,
   voice: 'Zarvox',
-  walkSpeed: 1.2,
+  walkSpeed: 0.7,
   water: { enabled: true, everyMinutes: 60 },
   awake: { from: '07:00', to: '22:30' },
   whisperBin: '',
@@ -27,11 +27,12 @@ function merge(base, over) {
   return out;
 }
 
-// v0.2: the sprout "Mochi" became the robot "Mario". Upgrade untouched old defaults only.
+// v0.2+: "Mochi" became the windup tin robot "Mario". Upgrade untouched old defaults only.
 function migrate(user) {
   let changed = false;
   if (user.name === 'Mochi') { user.name = 'Mario'; changed = true; }
   if (user.voice === 'Samantha') { user.voice = 'Zarvox'; changed = true; }
+  if (user.walkSpeed === 1.2) { user.walkSpeed = 0.7; changed = true; } // old tin legs walk slower
   return changed;
 }
 

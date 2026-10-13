@@ -23,40 +23,52 @@
     </div>
 
     <div id="buddy" class="hit walk" title="Click to talk · right-click for menu">
-      <div id="fx"><span class="z">z</span><span class="z">z</span><span class="bang">!</span><span class="dots"><i></i><i></i><i></i></span></div>
+      <div id="fx"><span class="z">z</span><span class="z">z</span><span class="bang">!</span><span class="sigh">…</span><span class="dots"><i></i><i></i><i></i></span></div>
       <svg id="svg" viewBox="0 0 120 120" width="120" height="120" aria-hidden="true">
+        <!-- legs (stiff, tin) -->
+        <g class="foot footL"><rect class="leg" x="42" y="88" width="13" height="16" rx="2" /><rect class="boot" x="38" y="102" width="20" height="9" rx="3" /></g>
+        <g class="foot footR"><rect class="leg" x="65" y="88" width="13" height="16" rx="2" /><rect class="boot" x="62" y="102" width="20" height="9" rx="3" /></g>
         <g id="body">
-          <!-- antenna -->
-          <g class="antenna">
-            <path class="rod" d="M60 21 L60 9" />
-            <circle class="bulb" cx="60" cy="7" r="4.5" />
+          <!-- windup key, sticking out of his side -->
+          <g class="key">
+            <rect class="keystem" x="88" y="75.5" width="11" height="5" rx="1.5" />
+            <path class="keybow" d="M99 78 C97 70 101 64 106 65 C111 66 111 73 104 78 C111 83 111 90 106 91 C101 92 97 86 99 78 Z" />
+            <circle class="keyhole" cx="105.5" cy="70.5" r="1.6" /><circle class="keyhole" cx="105.5" cy="85.5" r="1.6" />
           </g>
-          <!-- arms -->
-          <rect class="arm armL" x="21" y="77" width="9" height="20" rx="4.5" />
-          <rect class="arm armR" x="90" y="77" width="9" height="20" rx="4.5" />
+          <!-- arms: coiled tin tubes with round grabbers -->
+          <g class="arm armL"><rect class="armtube" x="20" y="56" width="10" height="24" rx="5" /><path class="coil" d="M20 62 H30 M20 67 H30 M20 72 H30" /><circle class="hand" cx="25" cy="83" r="5" /></g>
+          <g class="arm armR"><rect class="armtube" x="90" y="56" width="10" height="24" rx="5" /><path class="coil" d="M90 62 H100 M90 67 H100 M90 72 H100" /><circle class="hand" cx="95" cy="83" r="5" /></g>
           <!-- torso -->
-          <rect class="neck" x="53" y="68" width="14" height="8" rx="2" />
-          <rect class="torso" x="31" y="73" width="58" height="32" rx="11" />
-          <path class="vent" d="M40 82 H50 M40 87 H50 M40 92 H50" />
-          <circle class="chest" cx="73" cy="88" r="6" />
+          <rect class="tin" x="30" y="52" width="60" height="38" rx="6" />
+          <rect class="panel" x="39" y="58" width="42" height="24" rx="3" />
+          <circle class="dial" cx="49" cy="70" r="6" /><path class="needle" d="M49 70 L52 66" />
+          <circle class="dial" cx="65" cy="70" r="6" /><path class="needle" d="M65 70 L61 67" />
+          <circle class="chest" cx="75" cy="64" r="2.8" />
+          <path class="rust" d="M31 82 C35 79 40 83 38 88 L32 89 C30 87 30 84 31 82 Z" />
+          <path class="rust" d="M80 53 C84 52 88 54 89 58 C86 60 82 58 80 53 Z" />
+          <circle class="rivet" cx="34" cy="56" r="1.4" /><circle class="rivet" cx="86" cy="56" r="1.4" />
+          <circle class="rivet" cx="34" cy="86" r="1.4" /><circle class="rivet" cx="86" cy="86" r="1.4" />
+          <!-- neck -->
+          <rect class="neckring" x="52" y="47" width="16" height="6" rx="2" />
           <!-- head -->
-          <circle class="bolt" cx="24" cy="44" r="5" />
-          <circle class="bolt" cx="96" cy="44" r="5" />
-          <rect class="head" x="26" y="20" width="68" height="50" rx="17" />
-          <rect class="screen" x="34" y="27" width="52" height="36" rx="11" />
-          <ellipse class="cheek" cx="41" cy="54" rx="4" ry="2.5" />
-          <ellipse class="cheek" cx="79" cy="54" rx="4" ry="2.5" />
-          <g id="eyes">
-            <g class="eye" transform="translate(48 43)"><g class="pupil"><rect class="led" x="-5" y="-7" width="10" height="14" rx="5" /><rect class="shine" x="-3" y="-5" width="3" height="4" rx="1.5" /></g></g>
-            <g class="eye" transform="translate(72 43)"><g class="pupil"><rect class="led" x="-5" y="-7" width="10" height="14" rx="5" /><rect class="shine" x="-3" y="-5" width="3" height="4" rx="1.5" /></g></g>
+          <g class="head">
+            <g class="antenna"><path class="rod" d="M60 15 L60 6" /><circle class="bulb" cx="60" cy="5" r="3.2" /></g>
+            <path class="ear" d="M31 22 L25 25 L25 37 L31 40 Z" />
+            <path class="ear" d="M89 22 L95 25 L95 37 L89 40 Z" />
+            <rect class="tin" x="31" y="14" width="58" height="34" rx="7" />
+            <path class="rust" d="M78 15 C83 14 88 16 88 21 C84 22 80 20 78 15 Z" />
+            <path class="rust small" d="M33 42 C35 40 39 42 38 46 L34 47 Z" />
+            <circle class="rivet" cx="35" cy="18" r="1.3" /><circle class="rivet" cx="85" cy="18" r="1.3" />
+            <g id="eyes">
+              <g class="eye" transform="translate(47 29)"><circle class="rim" r="9" /><circle class="glass" r="6.5" /><g class="pupil"><circle class="glow" r="3.4" /><circle class="shine" cx="-1.2" cy="-1.3" r="1" /></g></g>
+              <g class="eye" transform="translate(73 29)"><circle class="rim" r="9" /><circle class="glass" r="6.5" /><g class="pupil"><circle class="glow" r="3.4" /><circle class="shine" cx="-1.2" cy="-1.3" r="1" /></g></g>
+            </g>
+            <path class="lids" d="M40 29 H54 M66 29 H80" />
+            <rect class="mouth open" x="49" y="39" width="22" height="5" rx="1" />
+            <path class="mouth smile" d="M50 39 V44 M54 39 V44 M58 39 V44 M62 39 V44 M66 39 V44 M70 39 V44" />
+            <rect class="grille" x="48" y="38" width="24" height="7" rx="1.5" />
           </g>
-          <path class="lids" d="M42 45 Q48 49 54 45 M66 45 Q72 49 78 45" />
-          <path class="mouth smile" d="M55 54 Q60 58 65 54" />
-          <rect class="mouth open" x="55" y="52" width="10" height="6" rx="3" />
         </g>
-        <!-- feet -->
-        <rect class="foot footL" x="38" y="104" width="18" height="9" rx="4.5" />
-        <rect class="foot footR" x="64" y="104" width="18" height="9" rx="4.5" />
       </svg>
       <div id="shadow"></div>
     </div>

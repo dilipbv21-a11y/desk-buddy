@@ -1,7 +1,7 @@
 /* Layout: transparent 300x340 window; character pinned bottom-center, speech bubble stacked above it. */
 :root {
-  --metal: #DCE4EE; --metal-2: #9DB4CF; --line: #2A3A4C; --screen: #142130; --led: #63F0FF;
-  --coral: #FF7A59; --cheek: #FF8FA3; --ink: #1E2833; --bubble: #FBFDFF; --bubble-line: #2A3A4C; --accent: #1D6FB8;
+  --tin: #7FA3A6; --tin-2: #6A8E91; --cream: #E8DDC4; --line: #34302B; --rust: #A65A2E; --rust-2: #C77B45;
+  --glow: #F5B942; --glow-hot: #FFE29A; --ink: #2A2622; --bubble: #FFFBF2; --bubble-line: #34302B; --accent: #9A4E22;
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
@@ -29,91 +29,116 @@ html, body { margin: 0; height: 100%; background: transparent; overflow: hidden;
 #actions #snooze { background: transparent; color: var(--accent); }
 @keyframes pop { from { transform: scale(.9) translateY(6px); opacity: 0; } to { transform: none; opacity: 1; } }
 
-/* ---------- buddy ---------- */
+/* ---------- buddy: an old windup tin robot ---------- */
 #buddy { position: relative; width: 120px; height: 128px; cursor: pointer; }
-#svg { display: block; overflow: visible; transition: transform .2s; }
+#svg { display: block; overflow: visible; transition: transform .25s; }
 #buddy.left #svg { transform: scaleX(-1); }
-#shadow { position: absolute; left: 30px; bottom: 2px; width: 60px; height: 8px; border-radius: 50%; background: rgba(0,0,0,.16); }
+#shadow { position: absolute; left: 32px; bottom: 4px; width: 56px; height: 7px; border-radius: 50%; background: rgba(0,0,0,.18); }
 
-.head { fill: var(--metal); stroke: var(--line); stroke-width: 3; }
-.torso { fill: var(--metal-2); stroke: var(--line); stroke-width: 3; }
-.neck, .bolt { fill: var(--metal-2); stroke: var(--line); stroke-width: 2.5; }
-.screen { fill: var(--screen); }
-.vent { fill: none; stroke: var(--line); stroke-width: 2.5; stroke-linecap: round; opacity: .55; }
-.chest { fill: var(--coral); stroke: var(--line); stroke-width: 2.5; animation: pulse 2.4s ease-in-out infinite; }
-.arm { fill: var(--metal); stroke: var(--line); stroke-width: 3; }
-.foot { fill: var(--line); }
-.cheek { fill: var(--cheek); opacity: .55; }
-.rod { fill: none; stroke: var(--line); stroke-width: 3; stroke-linecap: round; }
-.bulb { fill: var(--coral); stroke: var(--line); stroke-width: 2.5; animation: pulse 1.6s ease-in-out infinite; }
-.pupil .led { fill: var(--led); }
-.pupil .shine { fill: #fff; opacity: .85; }
-.lids { fill: none; stroke: var(--led); stroke-width: 3; stroke-linecap: round; opacity: 0; }
-.mouth.smile { fill: none; stroke: var(--led); stroke-width: 3; stroke-linecap: round; }
-.mouth.open { fill: var(--led); opacity: 0; }
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .45; } }
+.tin, .ear, .neckring, .armtube, .leg { fill: var(--tin); stroke: var(--line); stroke-width: 2.5; }
+.ear, .neckring { fill: var(--tin-2); }
+.panel { fill: var(--cream); stroke: var(--line); stroke-width: 2; opacity: .9; }
+.dial { fill: #F4EEDD; stroke: var(--line); stroke-width: 1.8; }
+.needle { stroke: var(--rust); stroke-width: 1.8; stroke-linecap: round; }
+.rust { fill: var(--rust); opacity: .75; }
+.rust.small { fill: var(--rust-2); }
+.rivet { fill: var(--line); opacity: .6; }
+.coil { stroke: var(--line); stroke-width: 1.5; opacity: .55; }
+.hand { fill: var(--tin-2); stroke: var(--line); stroke-width: 2.5; }
+.boot { fill: var(--line); }
+.keystem, .keybow { fill: #C9A75C; stroke: var(--line); stroke-width: 2; }
+.keyhole { fill: var(--line); opacity: .5; }
+.rod { stroke: var(--line); stroke-width: 2.5; stroke-linecap: round; }
+.bulb { fill: #8C8A80; stroke: var(--line); stroke-width: 2; }
+.chest { fill: #7A3B22; }
+.rim { fill: var(--cream); stroke: var(--line); stroke-width: 2.2; }
+.glass { fill: #2B2A27; }
+.glow { fill: var(--glow); opacity: .85; transition: fill .3s, opacity .3s; }
+.shine { fill: #fff; opacity: .7; }
+.grille { fill: none; stroke: var(--line); stroke-width: 2; }
+.mouth.smile { stroke: var(--line); stroke-width: 1.6; }
+.mouth.open { fill: var(--glow); opacity: 0; }
+.lids { stroke: var(--line); stroke-width: 2.5; stroke-linecap: round; opacity: 0; }
 
-#body, .foot, .arm, .antenna, #eyes { transform-box: fill-box; transform-origin: center; }
+#body, .foot, .arm, .key, .head, .antenna, .pupil, .glow { transform-box: fill-box; transform-origin: center; }
 #body { transform-origin: 50% 100%; }
+.arm { transform-origin: 50% 8%; }
+.head { transform-origin: 50% 100%; }
 .antenna { transform-origin: 50% 100%; }
-.arm { transform-origin: 50% 10%; }
+.key { transform-origin: 0% 50%; }
 
-/* blink */
-#eyes { animation: blink 4.2s infinite; }
-@keyframes blink { 0%, 94%, 100% { transform: scaleY(1); } 97% { transform: scaleY(.1); } }
+/* walk: slow stiff waddle, legs lift in turn, key turns */
+.walk #body { animation: waddle .9s ease-in-out infinite; }
+.walk .footL { animation: lift .9s ease-in-out infinite; }
+.walk .footR { animation: lift .9s ease-in-out infinite; animation-delay: -.45s; }
+.walk .armL { animation: swing .9s ease-in-out infinite; }
+.walk .armR { animation: swing .9s ease-in-out infinite reverse; }
+.walk .key, .attentive .key { animation: wind 1.2s linear infinite; }
+@keyframes waddle { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
+@keyframes lift { 0%, 50%, 100% { transform: translateY(0); } 25% { transform: translateY(-4px); } }
+@keyframes swing { 0%, 100% { transform: rotate(-8deg); } 50% { transform: rotate(8deg); } }
+@keyframes wind { 0% { transform: scaleY(1); } 50% { transform: scaleY(-1); } 100% { transform: scaleY(1); } }
 
-/* walk */
-.walk #body { animation: bob .42s ease-in-out infinite; }
-.walk .footL { animation: step .42s ease-in-out infinite; }
-.walk .footR { animation: step .42s ease-in-out infinite reverse; }
-.walk .armL { animation: swing .42s ease-in-out infinite; }
-.walk .armR { animation: swing .42s ease-in-out infinite reverse; }
-@keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
-@keyframes step { 0%, 100% { transform: translate(-3px, 0); } 50% { transform: translate(3px, -3px); } }
-@keyframes swing { 0%, 100% { transform: rotate(-12deg); } 50% { transform: rotate(12deg); } }
+/* idle = alone: he slumps, sighs, looks around, straightens up again */
+.idle #body { animation: slump 8s ease-in-out infinite; }
+.idle .head { animation: lookaround 8s ease-in-out infinite; }
+.idle .glow { opacity: .55; }
+.idle .sigh { animation: sigh 8s ease-in-out infinite; }
+@keyframes slump { 0%, 55%, 100% { transform: translateY(0) scale(1, 1); } 65%, 80% { transform: translateY(2px) scale(1.02, .97); } }
+@keyframes lookaround { 0%, 20%, 100% { transform: rotate(0); } 30%, 40% { transform: rotate(-5deg); } 48%, 55% { transform: rotate(4deg); } 65%, 80% { transform: rotate(0) translateY(1px); } }
+@keyframes sigh { 0%, 62% { opacity: 0; transform: translateY(4px); } 68% { opacity: .8; } 82% { opacity: 0; transform: translateY(-8px); } 100% { opacity: 0; } }
 
-/* idle + busy: breathe, antenna sway */
-.idle #body, .busy #body { animation: breathe 2.6s ease-in-out infinite; }
-.antenna { animation: sway 3s ease-in-out infinite; }
-@keyframes breathe { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.03, .97); } }
-@keyframes sway { 0%, 100% { transform: rotate(-6deg); } 50% { transform: rotate(6deg); } }
+/* attentive (bubble open, he's with you) */
+.attentive #body { animation: breathe 3s ease-in-out infinite; }
+@keyframes breathe { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.015, .985); } }
 
-/* listen: head tilt, arm up to "ear" */
-.listen #body { animation: none; transform: rotate(-7deg); }
-.listen .armR { transform: rotate(-150deg); }
-.listen .bulb { fill: var(--led); animation-duration: .5s; }
+/* company! eyes light up, chest lamp on */
+.listen .glow, .think .glow, .talk .glow, .alert .glow, .attentive .glow { fill: var(--glow-hot); opacity: 1; }
+.listen .pupil, .talk .pupil { transform: scale(1.25); }
+.listen .chest, .talk .chest, .alert .chest { fill: var(--glow); }
+.listen .bulb, .think .bulb, .talk .bulb { fill: var(--glow); animation: blinkbulb .6s steps(2) infinite; }
+.think .bulb { animation-duration: .3s; }
+@keyframes blinkbulb { 50% { fill: #8C8A80; } }
+.listen .head { transform: rotate(-6deg); }
+.listen .armR { transform: rotate(-160deg); }
+.think .head { animation: lookaround 2s ease-in-out infinite; }
+.think .pupil { transform: translate(1.5px, -2px) !important; }
 
-/* think */
-.think #body { animation: breathe 1.2s ease-in-out infinite; }
-.think .pupil { transform: translate(3px, -3px) !important; }
-.think .bulb { animation-duration: .35s; }
+/* talk: grille glows and flickers */
+.talk .mouth.open { opacity: 1; animation: flicker .18s steps(2) infinite; }
+@keyframes flicker { 50% { opacity: .35; } }
 
-/* talk */
-.talk .mouth.open { opacity: 1; animation: chatter .22s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: center; }
-.talk .mouth.smile { opacity: 0; }
-@keyframes chatter { from { transform: scaleY(.35); } to { transform: scaleY(1.1); } }
+/* alert: startled hop */
+.alert #body { animation: hop .55s ease-out 3; }
+@keyframes hop { 0%, 100% { transform: translateY(0); } 35% { transform: translateY(-10px) rotate(-3deg); } 65% { transform: translateY(0) rotate(2deg); } }
 
-/* alert: hop */
-.alert #body { animation: hop .5s ease-out 3; }
-@keyframes hop { 0%, 100% { transform: translateY(0) scale(1, 1); } 30% { transform: translateY(-14px) scale(.95, 1.05); } 60% { transform: translateY(0) scale(1.06, .94); } }
+/* night: sits down and winds down */
+.sleep #body { transform: translateY(10px); animation: none; }
+.sleep .foot { transform: scaleY(.45) translateY(11px); transform-origin: 50% 100%; }
+.sleep .head { transform: rotate(5deg) translateY(1px); }
+.sleep .glow { opacity: .12; }
+.sleep .lids { opacity: 1; stroke: var(--cream); stroke-width: 2.2; }
+.sleep .glass { fill: #1E1D1B; }
+.sleep .arm { transform: rotate(8deg); }
+.sleep .armR { transform: rotate(-8deg); }
+.sleep .key { animation: none; }
 
-/* sleep */
-.sleep #eyes { opacity: 0; animation: none; }
-.sleep .lids { opacity: 1; }
-.sleep #body { animation: breathe 4s ease-in-out infinite; }
-.sleep .bulb, .sleep .chest { animation: none; opacity: .3; }
-.sleep .screen { fill: #0C141D; }
+/* blink, now and then */
+#eyes { animation: blink 5s infinite; transform-box: fill-box; transform-origin: center; }
+.sleep #eyes { animation: none; }
+@keyframes blink { 0%, 95%, 100% { transform: scaleY(1); } 97% { transform: scaleY(.15); } }
 
 /* effects above the head */
-#fx { position: absolute; top: -14px; left: 0; right: 0; height: 26px; pointer-events: none; font: 700 18px system-ui; color: var(--line); }
+#fx { position: absolute; top: -12px; left: 0; right: 0; height: 26px; pointer-events: none; font: 700 18px system-ui; color: var(--line); }
 #fx > * { position: absolute; opacity: 0; }
-.bang { left: 88px; top: 0; color: var(--coral); }
-.alert .bang { opacity: 1; animation: hop .5s ease-out 3; }
-.z { left: 76px; top: 2px; font-size: 14px; }
-.z + .z { left: 88px; top: -10px; font-size: 18px; animation-delay: 1s !important; }
-.sleep .z { animation: zz 2s ease-in infinite; }
-@keyframes zz { 0% { opacity: 0; transform: translate(0, 6px); } 40% { opacity: 1; } 100% { opacity: 0; transform: translate(8px, -10px); } }
-.dots { left: 46px; top: 4px; display: flex; gap: 4px; }
+.bang { left: 90px; top: 0; color: var(--accent); }
+.alert .bang { opacity: 1; animation: hop .55s ease-out 3; }
+.sigh { left: 76px; top: 4px; font-size: 20px; color: #6E6A62; }
+.z { left: 78px; top: 14px; font-size: 13px; color: #6E6A62; }
+.z + .z { left: 88px; top: 2px; font-size: 16px; animation-delay: 1.5s !important; }
+.sleep .z { animation: zz 3s ease-in infinite; }
+@keyframes zz { 0% { opacity: 0; transform: translate(0, 6px); } 40% { opacity: .9; } 100% { opacity: 0; transform: translate(6px, -10px); } }
+.dots { left: 46px; top: 2px; display: flex; gap: 4px; }
 .dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--line); animation: dot 1s infinite; }
 .dots i:nth-child(2) { animation-delay: .15s; } .dots i:nth-child(3) { animation-delay: .3s; }
 .think .dots { opacity: 1; }

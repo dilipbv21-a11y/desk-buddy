@@ -1,19 +1,20 @@
 # Desk Buddy 🤖
 
-Mario, a small walking robot that lives at the bottom of your Mac screen. It reminds you about everything on your Google Calendar and nags you to drink water. Click it and say "push my case block to 1:30 and gym to 2:30", and Claude rearranges your calendar for you.
+Mario, an old windup tin robot who lives, a bit lonely, at the bottom of your Mac screen. It reminds you about everything on your Google Calendar and nags you to drink water. Click it and say "push my case block to 1:30 and gym to 2:30", and Claude rearranges your calendar for you.
 
-| Walking | Reminder | Talking | Asleep after 22:30 |
+| Walking | Glad you clicked | Talking | Winding down after 22:30 |
 |---|---|---|---|
 | ![](docs/walk.png) | ![](docs/remind.png) | ![](docs/talk.png) | ![](docs/sleep.png) |
 
 ## What it does
 
-- **Walks** along the top of your Dock, stops now and then, and turns around at the screen edges. Its eyes follow your cursor. You can drag it sideways.
+- **Walks** slowly along the top of your Dock on stiff tin legs while his windup key turns. When he stops, he slumps, sighs and looks around. His eyes follow your cursor, and you can drag him sideways.
 - **Calendar reminders.** It hops and shows a speech bubble 5 minutes before every event and again when the event starts. It also reads the reminder aloud and sends a macOS notification. You can tap "Got it" or "Snooze 10 min".
 - **Water reminders** every 60 minutes while you're awake.
 - **Click to talk.** It listens through your mic, transcribes on your Mac with whisper.cpp, and sends your request to Claude. Claude reads and edits your Google Calendar with tools, then answers in the bubble and out loud.
 - **Right-click** for a menu: type instead of talking, stay in place, sign in to Google, open settings, open the Daily OS board, or quit. The same menu sits in the menu bar under 🤖.
-- **Sleeps** between 22:30 and 07:00. It stops walking and skips water reminders so it doesn't nag you at night.
+- **Winds down** between 22:30 and 07:00. He sits, his eyes dim, he stops walking, and he skips water reminders so he doesn't nag you at night.
+- **Lights up when you click him.** His eyes glow and he greets you, because you're his only company.
 
 ## Setup (about 15 minutes, one time)
 
@@ -72,7 +73,7 @@ It asks you to confirm before deleting anything, or before changing more than 8 
 | `water` | `{ enabled: true, everyMinutes: 60 }` | Water reminder |
 | `awake` | `{ from: "07:00", to: "22:30" }` | Outside these hours it sleeps |
 | `speak` / `voice` | `true` / `Zarvox` | Read replies aloud in a robot voice. Try `Trinoids` or `Ralph`; `say -v '?'` lists every voice |
-| `walkSpeed` | `1.2` | Pixels per frame |
+| `walkSpeed` | `0.7` | Pixels per frame (he's old) |
 | `whisperBin` / `whisperModel` | auto | Override the speech-to-text paths |
 | `boardUrl` | empty | Link for the "Open Daily OS board" menu item |
 

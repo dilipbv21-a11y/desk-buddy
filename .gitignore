@@ -1,0 +1,10 @@
+node_modules/
+dist/
+out/
+.DS_Store
+*.log
+# never commit secrets
+google-credentials.json
+google-token.json
+config.json
+.env

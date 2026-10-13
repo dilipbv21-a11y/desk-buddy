@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; media-src 'self' mediastream:">
+  <title>Desk Buddy</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="stage">
+    <div id="bubble" class="hit" hidden>
+      <button id="close" class="x" aria-label="Close">×</button>
+      <div id="who"></div>
+      <div id="text"></div>
+      <div id="meter" hidden><i></i></div>
+      <form id="form" hidden>
+        <input id="input" type="text" placeholder="Ask me to move things around…" autocomplete="off">
+      </form>
+      <div id="actions" hidden>
+        <button id="ok">Got it</button>
+        <button id="snooze">Snooze 10 min</button>
+      </div>
+    </div>
+
+    <div id="buddy" class="hit walk" title="Click to talk · right-click for menu">
+      <div id="fx"><span class="z">z</span><span class="z">z</span><span class="bang">!</span><span class="dots"><i></i><i></i><i></i></span></div>
+      <svg id="svg" viewBox="0 0 120 120" width="120" height="120" aria-hidden="true">
+        <g id="body">
+          <!-- sprout -->
+          <path class="stem" d="M60 26 C60 18 61 13 63 8" />
+          <path class="leaf" d="M63 9 C70 2 80 4 82 9 C76 14 68 14 63 9 Z" />
+          <path class="leaf leaf2" d="M62 13 C55 7 46 9 45 14 C51 18 58 17 62 13 Z" />
+          <!-- arms -->
+          <ellipse class="arm armL" cx="21" cy="72" rx="7" ry="10" />
+          <ellipse class="arm armR" cx="99" cy="72" rx="7" ry="10" />
+          <!-- body -->
+          <path class="blob" d="M60 24 C88 24 104 46 104 72 C104 96 86 106 60 106 C34 106 16 96 16 72 C16 46 32 24 60 24 Z" />
+          <ellipse class="belly" cx="60" cy="84" rx="26" ry="16" />
+          <!-- face -->
+          <ellipse class="cheek" cx="35" cy="72" rx="7" ry="4" />
+          <ellipse class="cheek" cx="85" cy="72" rx="7" ry="4" />
+          <g id="eyes">
+            <g class="eye" transform="translate(44 60)"><ellipse class="white" rx="9" ry="10" /><g class="pupil"><circle r="5.5" /><circle class="shine" cx="-2" cy="-2.5" r="1.8" /></g></g>
+            <g class="eye" transform="translate(76 60)"><ellipse class="white" rx="9" ry="10" /><g class="pupil"><circle r="5.5" /><circle class="shine" cx="-2" cy="-2.5" r="1.8" /></g></g>
+          </g>
+          <path class="lids" d="M36 61 Q44 66 52 61 M68 61 Q76 66 84 61" />
+          <path class="mouth smile" d="M54 76 Q60 81 66 76" />
+          <ellipse class="mouth open" cx="60" cy="78" rx="4.5" ry="3.5" />
+        </g>
+        <!-- feet -->
+        <ellipse class="foot footL" cx="46" cy="108" rx="10" ry="5" />
+        <ellipse class="foot footR" cx="74" cy="108" rx="10" ry="5" />
+      </svg>
+      <div id="shadow"></div>
+    </div>
+  </div>
+  <script src="recorder.js"></script>
+  <script src="buddy.js"></script>
+</body>
+</html>

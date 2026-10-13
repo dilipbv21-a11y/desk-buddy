@@ -1,0 +1,113 @@
+/* Layout: transparent 300x340 window; character pinned bottom-center, speech bubble stacked above it. */
+:root {
+  --body: #BFEBD6; --body-dark: #2F5D4E; --belly: #E4F7EE; --cheek: #F6A9B6;
+  --leaf: #6CC08B; --ink: #1F2D27; --bubble: #FFFDF7; --bubble-line: #2F5D4E; --accent: #0D7A5F;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; user-select: none;
+  font: 14px/1.4 -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif; color: var(--ink); }
+#stage { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; padding-bottom: 6px; }
+
+/* ---------- bubble ---------- */
+#bubble { position: relative; width: 272px; margin-bottom: 12px; padding: 12px 14px;
+  background: var(--bubble); border: 2px solid var(--bubble-line); border-radius: 18px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.18); animation: pop .18s ease-out; }
+#bubble::after { content: ""; position: absolute; bottom: -9px; left: 50%; width: 14px; height: 14px; margin-left: -7px;
+  background: var(--bubble); border-right: 2px solid var(--bubble-line); border-bottom: 2px solid var(--bubble-line); transform: rotate(45deg); }
+#bubble[hidden] { display: none; }
+#who { font: 600 11px/1 -apple-system, system-ui; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+#who:empty { display: none; }
+#text { white-space: pre-wrap; word-wrap: break-word; padding-right: 10px; max-height: 120px; overflow-y: auto; }
+.x { position: absolute; top: 6px; right: 8px; border: 0; background: none; font-size: 18px; line-height: 1; color: #6B7C74; cursor: pointer; }
+#meter { height: 6px; margin-top: 8px; border-radius: 99px; background: #DDE9E3; overflow: hidden; }
+#meter i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .08s; }
+#form input { width: 100%; margin-top: 8px; padding: 7px 10px; border: 1.5px solid #9DB8AC; border-radius: 10px; font: inherit; outline: none; background: #fff; }
+#form input:focus { border-color: var(--accent); }
+#actions { display: flex; gap: 6px; margin-top: 8px; }
+#actions button { flex: 1; padding: 6px 8px; border-radius: 9px; border: 1.5px solid var(--accent); background: var(--accent); color: #fff; font: 600 12px system-ui; cursor: pointer; }
+#actions #snooze { background: transparent; color: var(--accent); }
+@keyframes pop { from { transform: scale(.9) translateY(6px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* ---------- buddy ---------- */
+#buddy { position: relative; width: 120px; height: 128px; cursor: pointer; }
+#svg { display: block; overflow: visible; transition: transform .2s; }
+#buddy.left #svg { transform: scaleX(-1); }
+#shadow { position: absolute; left: 30px; bottom: 2px; width: 60px; height: 8px; border-radius: 50%; background: rgba(0,0,0,.16); }
+
+.blob { fill: var(--body); stroke: var(--body-dark); stroke-width: 3; }
+.belly { fill: var(--belly); }
+.arm { fill: var(--body); stroke: var(--body-dark); stroke-width: 3; }
+.foot { fill: var(--body-dark); }
+.cheek { fill: var(--cheek); opacity: .75; }
+.stem { fill: none; stroke: var(--body-dark); stroke-width: 3; stroke-linecap: round; }
+.leaf { fill: var(--leaf); stroke: var(--body-dark); stroke-width: 2.5; }
+.white { fill: #fff; stroke: var(--body-dark); stroke-width: 2; }
+.pupil circle { fill: var(--ink); }
+.pupil .shine { fill: #fff; }
+.lids { fill: none; stroke: var(--ink); stroke-width: 3; stroke-linecap: round; opacity: 0; }
+.mouth.smile { fill: none; stroke: var(--ink); stroke-width: 3; stroke-linecap: round; }
+.mouth.open { fill: #7A2E3B; opacity: 0; }
+
+#body, .foot, .arm, .leaf, #eyes { transform-box: fill-box; transform-origin: center; }
+#body { transform-origin: 50% 100%; }
+.leaf { transform-origin: 0% 100%; }
+
+/* blink */
+#eyes { animation: blink 4.2s infinite; }
+@keyframes blink { 0%, 94%, 100% { transform: scaleY(1); } 97% { transform: scaleY(.1); } }
+
+/* walk */
+.walk #body { animation: bob .42s ease-in-out infinite; }
+.walk .footL { animation: step .42s ease-in-out infinite; }
+.walk .footR { animation: step .42s ease-in-out infinite reverse; }
+.walk .armL { animation: swing .42s ease-in-out infinite; }
+.walk .armR { animation: swing .42s ease-in-out infinite reverse; }
+@keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+@keyframes step { 0%, 100% { transform: translate(-3px, 0); } 50% { transform: translate(3px, -3px); } }
+@keyframes swing { 0%, 100% { transform: rotate(-12deg); } 50% { transform: rotate(12deg); } }
+
+/* idle + busy: breathe, leaf sway */
+.idle #body, .busy #body { animation: breathe 2.6s ease-in-out infinite; }
+.leaf { animation: sway 3s ease-in-out infinite; }
+@keyframes breathe { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.03, .97); } }
+@keyframes sway { 0%, 100% { transform: rotate(-6deg); } 50% { transform: rotate(6deg); } }
+
+/* listen: head tilt, arm up to "ear" */
+.listen #body { animation: none; transform: rotate(-7deg); }
+.listen .armR { transform: translate(-6px, -14px) rotate(-30deg); }
+
+/* think */
+.think #body { animation: breathe 1.2s ease-in-out infinite; }
+.think .pupil { transform: translate(3px, -4px) !important; }
+
+/* talk */
+.talk .mouth.open { opacity: 1; animation: chatter .22s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: center; }
+.talk .mouth.smile { opacity: 0; }
+@keyframes chatter { from { transform: scaleY(.35); } to { transform: scaleY(1.1); } }
+
+/* alert: hop */
+.alert #body { animation: hop .5s ease-out 3; }
+@keyframes hop { 0%, 100% { transform: translateY(0) scale(1, 1); } 30% { transform: translateY(-14px) scale(.95, 1.05); } 60% { transform: translateY(0) scale(1.06, .94); } }
+
+/* sleep */
+.sleep #eyes { opacity: 0; animation: none; }
+.sleep .lids { opacity: 1; }
+.sleep #body { animation: breathe 4s ease-in-out infinite; }
+
+/* effects above the head */
+#fx { position: absolute; top: -14px; left: 0; right: 0; height: 26px; pointer-events: none; font: 700 18px system-ui; color: var(--body-dark); }
+#fx > * { position: absolute; opacity: 0; }
+.bang { left: 86px; top: 0; color: #D9480F; }
+.alert .bang { opacity: 1; animation: hop .5s ease-out 3; }
+.z { left: 84px; top: 6px; font-size: 14px; }
+.z + .z { left: 96px; top: -6px; font-size: 18px; animation-delay: 1s !important; }
+.sleep .z { animation: zz 2s ease-in infinite; }
+@keyframes zz { 0% { opacity: 0; transform: translate(0, 6px); } 40% { opacity: 1; } 100% { opacity: 0; transform: translate(8px, -10px); } }
+.dots { left: 46px; top: 4px; display: flex; gap: 4px; }
+.dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--body-dark); animation: dot 1s infinite; }
+.dots i:nth-child(2) { animation-delay: .15s; } .dots i:nth-child(3) { animation-delay: .3s; }
+.think .dots { opacity: 1; }
+@keyframes dot { 0%, 100% { transform: translateY(0); opacity: .4; } 50% { transform: translateY(-5px); opacity: 1; } }
+
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; } }

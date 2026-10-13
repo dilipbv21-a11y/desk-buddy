@@ -5,8 +5,8 @@ const { dueReminders, waterDue } = require('../src/reminders');
 const { runAgent, trimHistory } = require('../src/agent');
 const { makeHandlers } = require('../src/tools');
 const { downsample, encodeWav } = require('../renderer/recorder');
-const { cleanTranscript } = require('../src/speech');
-const { merge, DEFAULTS } = require('../src/config');
+const { cleanTranscript, pickVoice } = require('../src/speech');
+const { merge, DEFAULTS, migrate } = require('../src/config');
 
 const TZ = 'Asia/Kolkata';
 
@@ -115,4 +115,16 @@ test('transcript cleanup and config merge', () => {
   assert.equal(c.water.enabled, true);
   assert.equal(c.water.everyMinutes, 45);
   assert.equal(c.name, 'Bolt');
+});
+
+test('robot voice and Mario migration', () => {
+  assert.equal(pickVoice('Zarvox', new Set(['Zarvox', 'Samantha'])), 'Zarvox');
+  assert.equal(pickVoice('Zarvox', new Set(['Trinoids', 'Samantha'])), 'Trinoids');
+  assert.equal(pickVoice('Zarvox', new Set(['Samantha'])), null);
+  const old = { name: 'Mochi', voice: 'Samantha', anthropicApiKey: 'k' };
+  assert.equal(migrate(old), true);
+  assert.deepEqual(old, { name: 'Mario', voice: 'Zarvox', anthropicApiKey: 'k' });
+  const custom = { name: 'Bolt', voice: 'Fred' };
+  assert.equal(migrate(custom), false);
+  assert.equal(DEFAULTS.name, 'Mario');
 });

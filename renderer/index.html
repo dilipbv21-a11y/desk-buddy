@@ -26,30 +26,37 @@
       <div id="fx"><span class="z">z</span><span class="z">z</span><span class="bang">!</span><span class="dots"><i></i><i></i><i></i></span></div>
       <svg id="svg" viewBox="0 0 120 120" width="120" height="120" aria-hidden="true">
         <g id="body">
-          <!-- sprout -->
-          <path class="stem" d="M60 26 C60 18 61 13 63 8" />
-          <path class="leaf" d="M63 9 C70 2 80 4 82 9 C76 14 68 14 63 9 Z" />
-          <path class="leaf leaf2" d="M62 13 C55 7 46 9 45 14 C51 18 58 17 62 13 Z" />
-          <!-- arms -->
-          <ellipse class="arm armL" cx="21" cy="72" rx="7" ry="10" />
-          <ellipse class="arm armR" cx="99" cy="72" rx="7" ry="10" />
-          <!-- body -->
-          <path class="blob" d="M60 24 C88 24 104 46 104 72 C104 96 86 106 60 106 C34 106 16 96 16 72 C16 46 32 24 60 24 Z" />
-          <ellipse class="belly" cx="60" cy="84" rx="26" ry="16" />
-          <!-- face -->
-          <ellipse class="cheek" cx="35" cy="72" rx="7" ry="4" />
-          <ellipse class="cheek" cx="85" cy="72" rx="7" ry="4" />
-          <g id="eyes">
-            <g class="eye" transform="translate(44 60)"><ellipse class="white" rx="9" ry="10" /><g class="pupil"><circle r="5.5" /><circle class="shine" cx="-2" cy="-2.5" r="1.8" /></g></g>
-            <g class="eye" transform="translate(76 60)"><ellipse class="white" rx="9" ry="10" /><g class="pupil"><circle r="5.5" /><circle class="shine" cx="-2" cy="-2.5" r="1.8" /></g></g>
+          <!-- antenna -->
+          <g class="antenna">
+            <path class="rod" d="M60 21 L60 9" />
+            <circle class="bulb" cx="60" cy="7" r="4.5" />
           </g>
-          <path class="lids" d="M36 61 Q44 66 52 61 M68 61 Q76 66 84 61" />
-          <path class="mouth smile" d="M54 76 Q60 81 66 76" />
-          <ellipse class="mouth open" cx="60" cy="78" rx="4.5" ry="3.5" />
+          <!-- arms -->
+          <rect class="arm armL" x="21" y="77" width="9" height="20" rx="4.5" />
+          <rect class="arm armR" x="90" y="77" width="9" height="20" rx="4.5" />
+          <!-- torso -->
+          <rect class="neck" x="53" y="68" width="14" height="8" rx="2" />
+          <rect class="torso" x="31" y="73" width="58" height="32" rx="11" />
+          <path class="vent" d="M40 82 H50 M40 87 H50 M40 92 H50" />
+          <circle class="chest" cx="73" cy="88" r="6" />
+          <!-- head -->
+          <circle class="bolt" cx="24" cy="44" r="5" />
+          <circle class="bolt" cx="96" cy="44" r="5" />
+          <rect class="head" x="26" y="20" width="68" height="50" rx="17" />
+          <rect class="screen" x="34" y="27" width="52" height="36" rx="11" />
+          <ellipse class="cheek" cx="41" cy="54" rx="4" ry="2.5" />
+          <ellipse class="cheek" cx="79" cy="54" rx="4" ry="2.5" />
+          <g id="eyes">
+            <g class="eye" transform="translate(48 43)"><g class="pupil"><rect class="led" x="-5" y="-7" width="10" height="14" rx="5" /><rect class="shine" x="-3" y="-5" width="3" height="4" rx="1.5" /></g></g>
+            <g class="eye" transform="translate(72 43)"><g class="pupil"><rect class="led" x="-5" y="-7" width="10" height="14" rx="5" /><rect class="shine" x="-3" y="-5" width="3" height="4" rx="1.5" /></g></g>
+          </g>
+          <path class="lids" d="M42 45 Q48 49 54 45 M66 45 Q72 49 78 45" />
+          <path class="mouth smile" d="M55 54 Q60 58 65 54" />
+          <rect class="mouth open" x="55" y="52" width="10" height="6" rx="3" />
         </g>
         <!-- feet -->
-        <ellipse class="foot footL" cx="46" cy="108" rx="10" ry="5" />
-        <ellipse class="foot footR" cx="74" cy="108" rx="10" ry="5" />
+        <rect class="foot footL" x="38" y="104" width="18" height="9" rx="4.5" />
+        <rect class="foot footR" x="64" y="104" width="18" height="9" rx="4.5" />
       </svg>
       <div id="shadow"></div>
     </div>

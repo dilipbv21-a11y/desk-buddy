@@ -1,7 +1,7 @@
 {
   "name": "desk-buddy",
   "productName": "Desk Buddy",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A cute walking desktop buddy for macOS that reminds you of your Google Calendar and reschedules your day with Claude when you talk to it.",
   "main": "main.js",
   "scripts": {

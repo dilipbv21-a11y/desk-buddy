@@ -6,8 +6,33 @@
   const api = window.buddy;
   const rec = new window.BuddyAudio.Recorder();
 
-  let name = 'Mochi', voice = false, base = 'walk', dir = 1, overlay = null;
+  let name = 'Mario', voice = false, base = 'walk', dir = 1, overlay = null;
   let listening = false, hideTimer = null, reminderText = '';
+
+  // ---------- robot beeps (tiny synth, no audio files) ----------
+  let actx = null;
+  function beep(notes) {
+    try {
+      actx = actx || new AudioContext();
+      let t = actx.currentTime;
+      for (const [freq, dur] of notes) {
+        const o = actx.createOscillator(), g = actx.createGain();
+        o.type = 'square'; o.frequency.setValueAtTime(freq, t);
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(0.06, t + 0.01);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+        o.connect(g).connect(actx.destination);
+        o.start(t); o.stop(t + dur + 0.02);
+        t += dur + 0.03;
+      }
+    } catch { /* audio is a nice-to-have */ }
+  }
+  const SOUNDS = {
+    hello: [[660, .07], [990, .09]],
+    heard: [[880, .06], [660, .08]],
+    reply: [[520, .06], [780, .06], [1040, .08]],
+    alert: [[1200, .07], [1200, .07], [1500, .12]],
+  };
 
   // ---------- mood ----------
   function paint() {
@@ -96,8 +121,9 @@
       return focusInput();
     }
     listening = true; heard = false; silentMs = 0; totalMs = 0;
+    beep(SOUNDS.hello);
     setOverlay('listen');
-    showBubble({ who: 'Listening', text: "Go ahead, I'm all ears. Click me when you're done.", meter: true });
+    showBubble({ who: 'Listening', text: 'Audio sensors on. Talk to me, then click me when done.', meter: true });
     try {
       await rec.start((rms, ms) => {
         el.meter.firstElementChild.style.width = `${Math.min(100, rms * 900)}%`;
@@ -118,8 +144,9 @@
   async function finishListening() {
     if (!listening) return;
     listening = false;
+    beep(SOUNDS.heard);
     setOverlay('think');
-    showBubble({ who: name, text: 'Got it, one sec…' });
+    showBubble({ who: name, text: 'Processing… beep boop.' });
     const wav = await rec.stop();
     let text = '';
     try { text = wav ? await api.transcribe(wav) : ''; } catch (e) {
@@ -154,6 +181,7 @@
     showBubble({ who: 'You said', text });
     let reply;
     try { reply = await api.ask(text); } catch (e) { reply = `Hmm, that failed: ${e.message}`; }
+    beep(SOUNDS.reply);
     setOverlay('talk');
     showBubble({ who: name, text: reply, hideAfter: readTime(reply) });
     setTimeout(() => { if (overlay === 'talk') setOverlay(null); }, Math.min(12000, reply.length * 65));
@@ -163,6 +191,7 @@
   api.onRemind(({ text, snooze }) => {
     if (listening || overlay === 'think') return; // don't interrupt a conversation
     reminderText = text;
+    beep(SOUNDS.alert);
     setOverlay('alert');
     setTimeout(() => { if (overlay === 'alert') setOverlay(null); }, 1700);
     showBubble({ who: 'Reminder', text, actions: true, hideAfter: 90000 });

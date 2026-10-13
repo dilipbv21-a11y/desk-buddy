@@ -1,6 +1,6 @@
-# Desk Buddy 🌱
+# Desk Buddy 🤖
 
-A small walking buddy that lives at the bottom of your Mac screen. It reminds you about everything on your Google Calendar and nags you to drink water. Click it and say "push my case block to 1:30 and gym to 2:30", and Claude rearranges your calendar for you.
+Mario, a small walking robot that lives at the bottom of your Mac screen. It reminds you about everything on your Google Calendar and nags you to drink water. Click it and say "push my case block to 1:30 and gym to 2:30", and Claude rearranges your calendar for you.
 
 | Walking | Reminder | Talking | Asleep after 22:30 |
 |---|---|---|---|
@@ -12,7 +12,7 @@ A small walking buddy that lives at the bottom of your Mac screen. It reminds yo
 - **Calendar reminders.** It hops and shows a speech bubble 5 minutes before every event and again when the event starts. It also reads the reminder aloud and sends a macOS notification. You can tap "Got it" or "Snooze 10 min".
 - **Water reminders** every 60 minutes while you're awake.
 - **Click to talk.** It listens through your mic, transcribes on your Mac with whisper.cpp, and sends your request to Claude. Claude reads and edits your Google Calendar with tools, then answers in the bubble and out loud.
-- **Right-click** for a menu: type instead of talking, stay in place, sign in to Google, open settings, open the Daily OS board, or quit. The same menu sits in the menu bar under 🌱.
+- **Right-click** for a menu: type instead of talking, stay in place, sign in to Google, open settings, open the Daily OS board, or quit. The same menu sits in the menu bar under 🤖.
 - **Sleeps** between 22:30 and 07:00. It stops walking and skips water reminders so it doesn't nag you at night.
 
 ## Setup (about 15 minutes, one time)
@@ -65,13 +65,13 @@ It asks you to confirm before deleting anything, or before changing more than 8 
 
 | Key | Default | What it does |
 |---|---|---|
-| `name` | `Mochi` | Buddy's name |
+| `name` | `Mario` | Robot's name |
 | `model` | `claude-sonnet-5-5` | Claude model used for conversations |
 | `timeZone` | `Asia/Kolkata` | Time zone for reading and writing events |
 | `reminderLeadMinutes` | `5` | How early the "coming up" reminder fires |
 | `water` | `{ enabled: true, everyMinutes: 60 }` | Water reminder |
 | `awake` | `{ from: "07:00", to: "22:30" }` | Outside these hours it sleeps |
-| `speak` / `voice` | `true` / `Samantha` | Read replies aloud (`say -v '?'` lists voices) |
+| `speak` / `voice` | `true` / `Zarvox` | Read replies aloud in a robot voice. Try `Trinoids` or `Ralph`; `say -v '?'` lists every voice |
 | `walkSpeed` | `1.2` | Pixels per frame |
 | `whisperBin` / `whisperModel` | auto | Override the speech-to-text paths |
 | `boardUrl` | empty | Link for the "Open Daily OS board" menu item |
@@ -90,7 +90,7 @@ To start it at login, drag the app into **System Settings → General → Login 
 - `src/agent.js`: the Claude tool-use loop. `src/tools.js`: the calendar tools Claude can call (list, create, update one, update a whole series, delete).
 - `src/calendar.js`: Google Calendar using a loopback OAuth flow. Tokens stay on your Mac with `chmod 600`.
 - `src/speech.js`: whisper.cpp for listening, macOS `say` for talking.
-- `renderer/`: the character (inline SVG with CSS animations), speech bubble, and mic recorder.
+- `renderer/`: the robot (inline SVG with CSS animations), speech bubble, beeps (Web Audio), and mic recorder.
 - `npm test` covers the time-zone math, reminder timing, the agent loop and the WAV encoding.
 
 ## Privacy

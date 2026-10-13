@@ -74,6 +74,7 @@ It asks you to confirm before deleting anything, or before changing more than 8 
 | `speak` / `voice` | `true` / `Samantha` | Read replies aloud (`say -v '?'` lists voices) |
 | `walkSpeed` | `1.2` | Pixels per frame |
 | `whisperBin` / `whisperModel` | auto | Override the speech-to-text paths |
+| `boardUrl` | empty | Link for the "Open Daily OS board" menu item |
 
 ## Build a real app (optional)
 

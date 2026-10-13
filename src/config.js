@@ -15,7 +15,7 @@ const DEFAULTS = {
   awake: { from: '07:00', to: '22:30' },
   whisperBin: '',
   whisperModel: '',
-  boardUrl: 'https://claude.ai/artifact/TM6xqtxoobV27RE4z2qH9w',
+  boardUrl: '',
 };
 
 function merge(base, over) {
